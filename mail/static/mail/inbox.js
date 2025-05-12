@@ -15,19 +15,23 @@ function compose_email() {
     document.querySelector('#compose-view').style.display = 'block';
 
     // Clear out composition fields
-    const composeRecipients = document.querySelector('#compose-recipients');
-    const composeSubject = document.querySelector('#compose-subject');
-    const composeBody = document.querySelector('#compose-body');
+    const recipients = document.querySelector('#compose-recipients');
+    const subject = document.querySelector('#compose-subject');
+    const messageBody = document.querySelector('#compose-body');
 
-    [composeRecipients.value, composeSubject.value, composeBody.value] = ['', '', ''];
+    [recipients.value, subject.value, messageBody.value] = ['', '', ''];
 
-    document.querySelector('#compose-form > input[type="submit"]').addEventListener('click', (event) => {
+    send_email(recipients.value, subject.value, messageBody.value);
+}
+
+function send_email(recipients, subject, messageBody) {
+    document.querySelector('#compose-form > input[type="submit"]').addEventListener('click', () => {
         fetch('/emails', {
             method: 'POST',
             body: JSON.stringify({
-                recipients: composeRecipients.value,
-                subject: composeSubject.value,
-                body: composeBody.value,
+                recipients: recipients,
+                subject: subject,
+                body: messageBody,
             }),
         })
             .then((response) => response.json())
