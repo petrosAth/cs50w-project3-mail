@@ -13,6 +13,7 @@ function compose_email() {
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
+    document.querySelector('#email-view').style.display = 'none';
 
     // Clear out composition fields
     const recipients = document.querySelector('#compose-recipients');
@@ -47,6 +48,7 @@ function load_mailbox(mailbox) {
     // Show the mailbox and hide other views
     document.querySelector('#emails-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'none';
 
     // Show the mailbox name
     document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -82,6 +84,8 @@ function list_emails(emails) {
     emails.forEach((email) => {
         const emailListItem = document.createElement('div');
         emailListItem.classList.add('row', 'border', 'rounded', 'mt-3', 'py-3', 'email-list__item');
+        emailListItem.dataset.emailId = email.id;
+        emailListItem.addEventListener('click', () => view_email(email.id));
         ['sender', 'subject', 'timestamp'].forEach((property, index) => {
             const emailListItemCol = document.createElement('div');
             emailListItemCol.classList.add('email-list__item-col');
@@ -102,4 +106,26 @@ function list_emails(emails) {
     });
 
     emailsView.append(emailList);
+}
+
+async function view_email(emailId) {
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    const emailView = document.querySelector('#email-view');
+    emailView.style.display = 'block';
+
+    const email = await get_email(emailId);
+    console.log(email);
+    document.querySelector('#email-from').value = email.sender;
+    email.recipients.forEach((recipient, index) => {
+        const comma = index === 0 ? '' : ', ';
+        document.querySelector('#email-recipients').value += `${comma}${recipient}`;
+    });
+    document.querySelector('#email-subject').value = email.subject;
+    document.querySelector('#email-body').value = email.body;
+    document.querySelector('#email-timestamp>pre').innerHTML = email.timestamp;
+}
+
+function get_email(emailId) {
+    return fetch(`/emails/${emailId}`).then((response) => response.json());
 }

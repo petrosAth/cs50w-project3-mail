@@ -36,6 +36,26 @@
             <input type="submit" class="btn btn-primary" />
         </form>
     </div>
+    <div id="email-view">
+        <h3>Email View</h3>
+        <div id="email">
+            <div class="form-group mb-3">
+                <label for="email-from" class="form-label">From:</label>
+                <input type="email" id="email-from" disabled class="form-control">
+            </div>
+            <div class="form-group mb-3">
+                <label for="email-recipients" class="form-label">To:</label>
+                <input id="email-recipients" disabled class="form-control">
+            </div>
+            <div class="form-group mb-3">
+                <input class="form-control" id="email-subject" disabled>
+            </div>
+            <textarea class="form-control mb-3" id="email-body" disabled rows="10"></textarea>
+            <div id="email-timestamp">
+                <pre></pre>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block script %}
     <script src="{% static 'mail/inbox.js' %}"></script>
