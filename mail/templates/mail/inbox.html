@@ -12,18 +12,28 @@
     <div id="compose-view">
         <h3>New Email</h3>
         <form id="compose-form">
-            <div class="form-group">
-                From:
-                <input disabled class="form-control" value="{{ request.user.email }}">
+            <div class="form-group mb-3">
+                <label for="compose-from" class="form-label">From:</label>
+                <input type="email"
+                       id="compose-from"
+                       disabled
+                       class="form-control"
+                       value="{{ request.user.email }}">
             </div>
-            <div class="form-group">
-                To:
-                <input id="compose-recipients" class="form-control">
+            <div class="form-group mb-3">
+                <label for="compose-recipients" class="form-label">To:</label>
+                <input type="email"
+                       id="compose-recipients"
+                       class="form-control"
+                       placeholder="name@example.com">
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
-            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+            <textarea class="form-control mb-3"
+                      id="compose-body"
+                      placeholder="Body"
+                      rows="10"></textarea>
             <input type="submit" class="btn btn-primary" />
         </form>
     </div>
