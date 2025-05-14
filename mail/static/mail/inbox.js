@@ -124,8 +124,19 @@ async function view_email(emailId) {
     document.querySelector('#email-subject').value = email.subject;
     document.querySelector('#email-body').value = email.body;
     document.querySelector('#email-timestamp>pre').innerHTML = email.timestamp;
+
+    if (email.id) mark_read(emailId);
 }
 
 function get_email(emailId) {
     return fetch(`/emails/${emailId}`).then((response) => response.json());
+}
+
+function mark_read(emailId) {
+    fetch(`/emails/${emailId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            read: true,
+        }),
+    });
 }
