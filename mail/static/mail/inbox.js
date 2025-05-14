@@ -22,6 +22,7 @@ function compose_email() {
     [recipients.value, subject.value, messageBody.value] = ['', '', ''];
 
     document.querySelector('#compose-form > input[type="submit"]').addEventListener('click', (event) => {
+        event.preventDefault();
         send_email(recipients.value, subject.value, messageBody.value);
     });
 }
