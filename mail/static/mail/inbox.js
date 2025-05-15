@@ -38,8 +38,7 @@ function send_email(recipients, subject, messageBody) {
         }),
     })
         .then((response) => response.json())
-        .then((result) => {
-            console.log(result);
+        .then(() => {
             load_mailbox('sent');
         });
 }
@@ -56,13 +55,13 @@ function load_mailbox(mailbox) {
     fetch(`/emails/${mailbox}`)
         .then((response) => response.json())
         .then((emails) => {
-            console.log(emails);
             list_emails(emails);
         });
 }
 
 function list_emails(emails) {
     const emailsView = document.querySelector('#emails-view');
+    if (document.querySelector('.email-list')) document.querySelector('.email-list').remove();
     const emailList = document.createElement('div');
     emailList.classList.add('container', 'email-list');
     const emailListTitle = document.createElement('div');
@@ -115,7 +114,6 @@ async function view_email(emailId) {
     emailView.style.display = 'block';
 
     const email = await get_email(emailId);
-    console.log(email);
     document.querySelector('#email-from').value = email.sender;
     email.recipients.forEach((recipient, index) => {
         const comma = index === 0 ? '' : ', ';
@@ -124,6 +122,13 @@ async function view_email(emailId) {
     document.querySelector('#email-subject').value = email.subject;
     document.querySelector('#email-body').value = email.body;
     document.querySelector('#email-timestamp>pre').innerHTML = email.timestamp;
+    const archiveBtn = document.querySelector('#email-archive-btn');
+    archiveBtn.style.display = 'block';
+    archiveBtn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
+    archiveBtn.addEventListener('click', async () => {
+        await toggle_archive(emailId);
+        load_mailbox('inbox');
+    });
 
     if (email.id) mark_read(emailId);
 }
@@ -137,6 +142,17 @@ function mark_read(emailId) {
         method: 'PUT',
         body: JSON.stringify({
             read: true,
+        }),
+    });
+}
+
+async function toggle_archive(emailId) {
+    const email = await get_email(emailId);
+
+    await fetch(`/emails/${emailId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: !email.archived,
         }),
     });
 }
