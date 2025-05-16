@@ -9,22 +9,26 @@ document.addEventListener('DOMContentLoaded', function () {
     load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(recipientsValue, subjectValue, messageBodyValue) {
     // Show compose view and hide other views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'block';
     document.querySelector('#email-view').style.display = 'none';
 
     // Clear out composition fields
-    const recipients = document.querySelector('#compose-recipients');
-    const subject = document.querySelector('#compose-subject');
-    const messageBody = document.querySelector('#compose-body');
+    const recipientsEl = document.querySelector('#compose-recipients');
+    const subjectEl = document.querySelector('#compose-subject');
+    const messageBodyEl = document.querySelector('#compose-body');
 
-    [recipients.value, subject.value, messageBody.value] = ['', '', ''];
+    [recipientsEl.value, subjectEl.value, messageBodyEl.value] = [
+        recipientsValue || '',
+        subjectValue || '',
+        messageBodyValue || '',
+    ];
 
     document.querySelector('#compose-form > input[type="submit"]').addEventListener('click', (event) => {
         event.preventDefault();
-        send_email(recipients.value, subject.value, messageBody.value);
+        send_email(recipientsEl.value, subjectEl.value, messageBodyEl.value);
     });
 }
 
@@ -122,6 +126,19 @@ async function view_email(emailId) {
     document.querySelector('#email-subject').value = email.subject;
     document.querySelector('#email-body').value = email.body;
     document.querySelector('#email-timestamp>pre').innerHTML = email.timestamp;
+
+    const replyBtn = document.querySelector('#email-reply-btn');
+    replyBtn.style.display = 'block';
+    replyBtn.addEventListener('click', () => {
+        const replySubject = email.subject.match(/^RE: /) ? email.subject : `RE: ${email.subject}`;
+        const replyMessageBody = `\n \nOn ${email.timestamp}, ${email.sender} wrote:\n${email.body}`;
+        compose_email(email.sender, replySubject, replyMessageBody);
+        document.querySelector('textarea').addEventListener('focus', (event) => {
+            event.target.setSelectionRange(0, 0);
+        });
+        document.querySelector('textarea').focus();
+    });
+
     const archiveBtn = document.querySelector('#email-archive-btn');
     archiveBtn.style.display = 'block';
     archiveBtn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
