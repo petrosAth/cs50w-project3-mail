@@ -114,25 +114,26 @@ function list_emails(emails) {
 }
 
 async function view_email(emailId, showReply) {
-    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelectorAll('.email-list__item').forEach((element) => element.remove()),
+        (document.querySelector('#emails-view').style.display = 'none');
     document.querySelector('#compose-view').style.display = 'none';
     const emailView = document.querySelector('#email-view');
     emailView.style.display = 'block';
 
     const email = await get_email(emailId);
+
     document.querySelector('#email-from').value = email.sender;
-    email.recipients.forEach((recipient, index) => {
-        const comma = index === 0 ? '' : ', ';
-        document.querySelector('#email-recipients').value += `${comma}${recipient}`;
-    });
+    document.querySelector('#email-recipients').value = email.recipients.join(', ');
     document.querySelector('#email-subject').value = email.subject;
     document.querySelector('#email-body').value = email.body;
     document.querySelector('#email-timestamp>pre').innerHTML = email.timestamp;
 
     if (showReply) {
         const replyBtn = document.querySelector('#email-reply-btn');
-        replyBtn.style.display = 'block';
-        replyBtn.addEventListener('click', () => {
+        replyBtn.replaceWith(replyBtn.cloneNode(true));
+        const newReplyBtn = document.querySelector('#email-reply-btn');
+        newReplyBtn.style.display = 'block';
+        newReplyBtn.addEventListener('click', () => {
             const replySubject = email.subject.match(/^RE: /) ? email.subject : `RE: ${email.subject}`;
             const replyMessageBody = `\n \nOn ${email.timestamp}, ${email.sender} wrote:\n${email.body}`;
 
@@ -150,9 +151,11 @@ async function view_email(emailId, showReply) {
     }
 
     const archiveBtn = document.querySelector('#email-archive-btn');
-    archiveBtn.style.display = 'block';
-    archiveBtn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
-    archiveBtn.addEventListener('click', async () => {
+    archiveBtn.replaceWith(archiveBtn.cloneNode(true));
+    const newArchiveBtn = document.querySelector('#email-archive-btn');
+    newArchiveBtn.style.display = 'block';
+    newArchiveBtn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
+    newArchiveBtn.addEventListener('click', async () => {
         await toggle_archive(emailId);
         load_mailbox('inbox');
     });
