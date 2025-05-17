@@ -10,6 +10,8 @@ This website was created as part of
 an online course focused on designing and implementing web applications using
 Python, JavaScript, and SQL with frameworks like Django, React, and Bootstrap.
 
+> [Video Demonstration](https://youtu.be/bcuRyWg6ijQ)
+
 ## Features
 
 - User authentication (registration, login, logout).
